@@ -18,6 +18,7 @@ function Router() {
       <Route path="/dashboard/widgets/:id" component={Dashboard} />
       <Route path="/dashboard/placements" component={Dashboard} />
       <Route path="/dashboard/audience" component={Dashboard} />
+      <Route path="/dashboard/analytics" component={Dashboard} />
       <Route path="/dashboard/story-bar" component={Dashboard} />
       <Route path="/dashboard/recipes/catalogue" component={Dashboard} />
       <Route path="/dashboard/recipes/widgets" component={Dashboard} />

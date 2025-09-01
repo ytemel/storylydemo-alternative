@@ -24,6 +24,7 @@ const navigation = [
   { name: "Recipes", href: "/dashboard/recipes", icon: Wand2 },
   { name: "Placement", href: "/dashboard/placements", icon: Target },
   { name: "Audience", href: "/dashboard/audience", icon: Users },
+  { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
