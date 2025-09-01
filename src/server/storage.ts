@@ -179,25 +179,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date(),
     } as Widget;
 
-    const recipeWidget2 = {
-      id: this.currentWidgetId++,
-      name: "Product Carousel",
-      type: "carousel",
-      isRecipeWidget: true,
-      content: {
-        title: "Featured Products",
-        description: "Scroll through our best items",
-      },
-      style: {
-        backgroundColor: "#10B981",
-        textColor: "#FFFFFF",
-        layout: "horizontal",
-        fontSize: "16px",
-      },
-      status: "draft",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    } as Widget;
+
 
     const recipeWidget3 = {
       id: this.currentWidgetId++,
@@ -242,7 +224,6 @@ export class MemStorage implements IStorage {
 
     // Add recipe widgets to storage
     this.widgets.set(recipeWidget1.id, recipeWidget1);
-    this.widgets.set(recipeWidget2.id, recipeWidget2);
     this.widgets.set(recipeWidget3.id, recipeWidget3);
     this.widgets.set(recipeWidget4.id, recipeWidget4);
 
@@ -293,71 +274,11 @@ export class MemStorage implements IStorage {
       updatedAt: new Date(),
     } as Widget;
 
-    const widget5 = {
-      id: this.currentWidgetId++,
-      name: "Brand Story Bar",
-      type: "story-bar",
-      isRecipeWidget: false,
-      parentRecipeId: null,
-      content: {
-        title: "Brand Stories",
-        description: "Engaging brand content",
-      },
-      style: {
-        backgroundColor: "#EC4899",
-        textColor: "#FFFFFF",
-        layout: "horizontal",
-        fontSize: "16px",
-      },
-      placementId: placement1.id,
-      status: "draft",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    } as Widget;
 
-    const widget6 = {
-      id: this.currentWidgetId++,
-      name: "Homepage Swipe Cards",
-      type: "swipe-card",
-      isRecipeWidget: false,
-      parentRecipeId: null,
-      content: {
-        title: "Interactive Products",
-        description: "Swipe to explore products",
-      },
-      style: {
-        backgroundColor: "#8B5CF6",
-        textColor: "#FFFFFF",
-        layout: "vertical",
-        fontSize: "16px",
-      },
-      placementId: placement2.id,
-      status: "active",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    } as Widget;
 
-    const widget7 = {
-      id: this.currentWidgetId++,
-      name: "Featured Carousel",
-      type: "carousel",
-      isRecipeWidget: false,
-      parentRecipeId: null,
-      content: {
-        title: "Featured Products",
-        description: "Scroll through our best items",
-      },
-      style: {
-        backgroundColor: "#10B981",
-        textColor: "#FFFFFF",
-        layout: "horizontal",
-        fontSize: "16px",
-      },
-      placementId: placement1.id,
-      status: "active",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    } as Widget;
+
+
+
 
     const widget8 = {
       id: this.currentWidgetId++,
@@ -434,9 +355,6 @@ export class MemStorage implements IStorage {
     // Add standalone widgets to storage
     this.widgets.set(widget3.id, widget3);
     this.widgets.set(widget4.id, widget4);
-    this.widgets.set(widget5.id, widget5);
-    this.widgets.set(widget6.id, widget6);
-    this.widgets.set(widget7.id, widget7);
     this.widgets.set(widget8.id, widget8);
     this.widgets.set(widget9.id, widget9);
     this.widgets.set(widget10.id, widget10);
