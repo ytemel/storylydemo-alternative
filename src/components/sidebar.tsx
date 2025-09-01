@@ -10,28 +10,51 @@ import {
   Zap,
   User,
   ChevronRight,
+  Users,
+  Target,
+  Video,
+  Grid3X3,
+  Image,
 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import type { Widget } from "@/shared/schema";
 
 const navigation = [
   { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
   { name: "Recipes", href: "/dashboard/recipes", icon: Wand2 },
-  { name: "Stories", href: "/dashboard/stories/overview", icon: Puzzle },
-  { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3, badge: "New" },
+  { name: "Placement", href: "/dashboard/placements", icon: Target },
+  { name: "Audience", href: "/dashboard/audience", icon: Users },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
 const recipesSubItems = [
-  { name: "Recipe Studio", href: "/dashboard/recipes" },
-  { name: "Widgets", href: "/dashboard/recipes/widgets" },
+  { name: "Campaigns", href: "/dashboard/recipes" },
 ];
 
-const storiesSubItems = [
-  { name: "Overview", href: "/dashboard/stories/overview" },
-  { name: "Content", href: "/dashboard/stories/content" },
+// Fixed widgets that are always visible
+const fixedWidgetItems = [
+  { name: "Widget Library", href: "/dashboard/widgets", icon: Grid3X3 },
+  { name: "Story Bar", href: "/dashboard/story-bar", icon: Video },
 ];
 
 export default function Sidebar() {
   const [location] = useLocation();
+  
+  // Fetch created widgets to display in sidebar
+  const { data: widgets = [] } = useQuery<Widget[]>({
+    queryKey: ["/api/widgets"],
+  });
+  
+  // Get unique widget types from ALL created widgets (both widget only and recipe widgets)
+  const createdWidgetTypes = Array.from(new Set(
+    widgets
+      .filter(widget => 
+        widget.type !== 'story-bar' && // Exclude story-bar since it's shown as fixed item
+        widget.type !== 'standalone-story-bar' && // Exclude standalone-story-bar since story-bar is fixed
+        widget.status !== 'archived' // Exclude archived widgets
+      )
+      .map(widget => widget.type)
+  ));
 
   return (
     <aside className={cn(storylyStyles.sidebar(), "flex flex-col h-screen fixed left-0 top-0")}>
@@ -53,7 +76,6 @@ export default function Sidebar() {
           {navigation.map((item) => {
             const Icon = item.icon;
             const isActive = location === item.href || 
-              (item.href === '/dashboard' && location === '/') ||
               (item.href === '/dashboard/recipes' && location?.startsWith('/dashboard/recipes'));
             
             return (
@@ -79,11 +101,10 @@ export default function Sidebar() {
                         {item.badge}
                       </span>
                     )}
-                    {(item.name === 'Recipes' || item.name === 'Stories') && (
+                    {item.name === 'Recipes' && (
                       <ChevronRight size={16} className={cn(
                         "transition-transform duration-150",
-                        ((location?.startsWith('/dashboard/recipes') && item.name === 'Recipes')
-                          || (location?.startsWith('/dashboard/stories') && item.name === 'Stories')) && "rotate-90"
+                        location?.startsWith('/dashboard/recipes') && "rotate-90"
                       )} />
                     )}
                   </div>
@@ -107,24 +128,76 @@ export default function Sidebar() {
                   </div>
                 )}
 
-                {/* Stories Submenu */}
-                {item.name === 'Stories' && (location?.startsWith('/dashboard/stories')) && (
-                  <div className="ml-6 mt-1 space-y-1">
-                    {storiesSubItems.map((subItem) => (
-                      <Link
-                        key={subItem.name}
-                        href={subItem.href}
-                        className={cn(
-                          "flex items-center gap-3 w-full px-4 py-2 rounded-lg text-sm",
-                          "text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-colors duration-150"
-                        )}
-                      >
-                        <span>{subItem.name}</span>
-                      </Link>
-                    ))}
-                  </div>
-                )}
               </div>
+            );
+          })}
+        </div>
+        
+        {/* Widget Library Section */}
+        <div className="mt-6 space-y-1">
+          {/* Widget Library Header */}
+          <div className="px-4 py-2">
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Widget Library
+            </h3>
+          </div>
+          
+          {/* Fixed Widget Items */}
+          {fixedWidgetItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = location === item.href;
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 w-full px-4 py-2 rounded-lg text-sm mx-4",
+                  isActive
+                    ? "bg-primary text-white"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-colors duration-150"
+                )}
+              >
+                <Icon size={16} className="shrink-0" />
+                <span className="font-medium">{item.name}</span>
+              </Link>
+            );
+          })}
+          
+          {/* Created Widget Types */}
+          {createdWidgetTypes.map((widgetType) => {
+            const widgetTypeHref = `/dashboard/widgets/type/${widgetType}`;
+            const isActive = location === widgetTypeHref;
+            
+            // Get appropriate icon for widget type
+            const getWidgetTypeIcon = (type: string) => {
+              switch (type) {
+                case 'video-feed': return Video;
+                case 'banner': return Image;
+                case 'swipe-card': return Grid3X3;
+                case 'canvas': return Grid3X3;
+                case 'quiz': return Grid3X3;
+                case 'countdown': return Grid3X3;
+                default: return Video;
+              }
+            };
+            
+            const Icon = getWidgetTypeIcon(widgetType);
+            const displayName = widgetType.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+            
+            return (
+              <Link
+                key={widgetType}
+                href={widgetTypeHref}
+                className={cn(
+                  "flex items-center gap-3 w-full px-4 py-2 rounded-lg text-sm mx-4",
+                  isActive
+                    ? "bg-primary text-white"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-colors duration-150"
+                )}
+              >
+                <Icon size={16} className="shrink-0" />
+                <span className="font-medium truncate">{displayName}</span>
+              </Link>
             );
           })}
         </div>

@@ -26,32 +26,70 @@ export async function getWidget(id: string) {
 export async function createWidget(widgetData: InsertWidget) {
   try {
     const parsedWidgetData = insertWidgetSchema.parse(widgetData);
-    // Enforce rule: non-Story widgets must be created within a Recipe (have parentRecipeId)
-    const isStory = parsedWidgetData.type === "story-bar";
-    if (!isStory && !parsedWidgetData.parentRecipeId) {
-      throw new Error("Create widgets inside a Recipe.");
+    
+    // Validate widget type constraints
+    const isRecipeWidget = (parsedWidgetData as any).isRecipeWidget;
+    
+    // Recipe widgets cannot have placementId
+    if (isRecipeWidget && parsedWidgetData.placementId) {
+      throw new Error("Recipe widgets cannot be assigned to placements");
     }
+    
+    // Widget only widgets cannot have parentRecipeId
+    if (!isRecipeWidget && parsedWidgetData.parentRecipeId) {
+      throw new Error("Widget only widgets cannot be assigned to recipes");
+    }
+    
     // If parent recipe is "widgets-only", never allow story-bar
     if (parsedWidgetData.parentRecipeId) {
       const parent = await storage.getRecipe(parsedWidgetData.parentRecipeId);
-      if ((parent as any)?.category === "widgets-only" && isStory) {
+      if ((parent as any)?.category === "widgets-only" && parsedWidgetData.type === "story-bar") {
         throw new Error("Story widgets are not allowed in Widgets Only category.");
       }
     }
+    
     const widget = await storage.createWidget(parsedWidgetData);
     return widget;
-  } catch {
-    throw new Error("Invalid widget data");
+  } catch (error: any) {
+    throw new Error(error.message || "Invalid widget data");
   }
 }
 
 export async function updateWidget(id: string, widgetData: InsertWidget) {
   try {
     const parsedWidgetData = insertWidgetSchema.partial().parse(widgetData);
+    
+    // Get existing widget to check constraints
+    const existingWidget = await storage.getWidget(parseInt(id));
+    if (!existingWidget) {
+      throw new Error("Widget not found");
+    }
+    
+    // Prevent changing widget type if already attached to recipe or placement
+    if ((parsedWidgetData as any).isRecipeWidget !== undefined) {
+      const isCurrentlyAttached = existingWidget.parentRecipeId || existingWidget.placementId;
+      if (isCurrentlyAttached) {
+        throw new Error("Cannot change widget type - widget is already attached to a recipe or placement");
+      }
+    }
+    
+    // Validate widget type constraints for updates
+    const isRecipeWidget = (parsedWidgetData as any).isRecipeWidget ?? (existingWidget as any).isRecipeWidget;
+    
+    // Recipe widgets cannot have placementId
+    if (isRecipeWidget && parsedWidgetData.placementId) {
+      throw new Error("Recipe widgets cannot be assigned to placements");
+    }
+    
+    // Widget only widgets cannot have parentRecipeId  
+    if (!isRecipeWidget && parsedWidgetData.parentRecipeId) {
+      throw new Error("Widget only widgets cannot be assigned to recipes");
+    }
+    
     const widget = await storage.updateWidget(parseInt(id), parsedWidgetData);
     return widget;
-  } catch {
-    throw new Error("Failed to update widget");
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to update widget");
   }
 }
 

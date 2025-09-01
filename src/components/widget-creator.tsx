@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import WidgetPreview from "./widget-preview";
@@ -36,7 +37,8 @@ import type { WidgetType } from "@/lib/types";
 
 const widgetFormSchema = z.object({
   name: z.string().min(1, "Widget name is required"),
-  type: z.enum(["banner", "story-bar", "video-feed", "carousel"]),
+  type: z.enum(["banner", "story-bar", "standalone-story-bar", "video-feed", "carousel", "swipe-card", "canvas", "quiz", "countdown"]),
+  isRecipeWidget: z.boolean().default(false),
   parentRecipeId: z.number().optional(),
   content: z.object({
     title: z.string().optional(),
@@ -62,17 +64,18 @@ interface WidgetCreatorProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   widget?: Widget;
-  // selectedType?: string;  // ❌ Removed from props
+  selectedType?: string;
 }
 
 export default function WidgetCreator({
   open,
   onOpenChange,
   widget,
+  selectedType: propSelectedType,
 }: WidgetCreatorProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [selectedType, setSelectedType] = useState<WidgetType>("banner"); // ✅ Keeps local state
+  const [selectedType, setSelectedType] = useState<WidgetType>(propSelectedType as WidgetType || "banner");
 
   const { data: placements = [] } = useQuery<Placement[]>({
     queryKey: ["/api/placements"],
@@ -83,7 +86,8 @@ export default function WidgetCreator({
     resolver: zodResolver(widgetFormSchema),
     defaultValues: {
       name: widget?.name || "",
-      type: widget ? (widget.type as WidgetType) : selectedType || "banner",
+      type: widget ? (widget.type as WidgetType) : (propSelectedType as WidgetType) || "banner",
+      isRecipeWidget: (widget as any)?.isRecipeWidget || false,
       parentRecipeId: widget?.parentRecipeId || undefined,
       content: widget?.content || {},
       style: widget?.style || {
@@ -94,6 +98,27 @@ export default function WidgetCreator({
       status: (widget?.status as any) || "draft",
     },
   });
+
+  // Reset form when dialog opens with a new selected type
+  useEffect(() => {
+    if (open && !widget) {
+      const newType = (propSelectedType as WidgetType) || "banner";
+      setSelectedType(newType);
+      form.reset({
+        name: "",
+        type: newType,
+        isRecipeWidget: false,
+        parentRecipeId: undefined,
+        content: {},
+        style: {
+          backgroundColor: "#6B46C1",
+          textColor: "#FFFFFF",
+        },
+        placementId: undefined,
+        status: "draft",
+      });
+    }
+  }, [open, propSelectedType, widget, form]);
 
   const createMutation = useMutation({
     mutationFn: async (data: WidgetFormData) => {
@@ -111,8 +136,7 @@ export default function WidgetCreator({
     onError: (e: any) => {
       toast({
         title: "Error creating widget",
-        description: e?.message === 'Create widgets inside a Recipe.' ? 'Create widgets inside a Recipe.' :
-          "There was an error creating your widget. Please try again.",
+        description: "There was an error creating your widget. Please try again.",
         variant: "destructive",
       });
     },
@@ -176,6 +200,58 @@ export default function WidgetCreator({
                         <Input placeholder="Enter widget name" {...field} />
                       </FormControl>
                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="isRecipeWidget"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">
+                          Widget Usage Type
+                        </FormLabel>
+                        <div className="text-[0.8rem] text-muted-foreground">
+                          {field.value 
+                            ? "This widget can only be used within recipes" 
+                            : "This widget can be used independently with placements"
+                          }
+                        </div>
+                      </div>
+                      <FormControl>
+                        <div className="space-y-2">
+                          <div className="flex items-center space-x-2">
+                            <span className={`text-sm ${!field.value ? 'font-semibold text-primary' : 'text-muted-foreground'}`}>
+                              Widget Only
+                            </span>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={(checked) => {
+                                // Prevent changing if widget is already attached
+                                if (widget?.parentRecipeId || widget?.placementId) {
+                                  return;
+                                }
+                                field.onChange(checked);
+                                // Clear placement when switching to recipe widget
+                                if (checked) {
+                                  form.setValue("placementId", undefined);
+                                }
+                              }}
+                              disabled={!!(widget?.parentRecipeId || widget?.placementId)}
+                            />
+                            <span className={`text-sm ${field.value ? 'font-semibold text-primary' : 'text-muted-foreground'}`}>
+                              Recipe Widget
+                            </span>
+                          </div>
+                          {(widget?.parentRecipeId || widget?.placementId) && (
+                            <div className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded">
+                              ⚠️ Cannot change type - widget is already attached to a {widget?.parentRecipeId ? 'recipe' : 'placement'}
+                            </div>
+                          )}
+                        </div>
+                      </FormControl>
                     </FormItem>
                   )}
                 />
@@ -280,38 +356,40 @@ export default function WidgetCreator({
                   </div>
                 </div>
 
-                <FormField
-                  control={form.control}
-                  name="placementId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Placement</FormLabel>
-                      <Select
-                        onValueChange={(value) =>
-                          field.onChange(parseInt(value))
-                        }
-                        value={field.value?.toString()}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select placement" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {placements.map((placement) => (
-                            <SelectItem
-                              key={placement.id}
-                              value={placement.id.toString()}
-                            >
-                              {placement.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {!form.watch("isRecipeWidget") && (
+                  <FormField
+                    control={form.control}
+                    name="placementId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Placement</FormLabel>
+                        <Select
+                          onValueChange={(value) =>
+                            field.onChange(parseInt(value))
+                          }
+                          value={field.value?.toString()}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select placement" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {placements.map((placement) => (
+                              <SelectItem
+                                key={placement.id}
+                                value={placement.id.toString()}
+                              >
+                                {placement.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
                 <FormField
                   control={form.control}

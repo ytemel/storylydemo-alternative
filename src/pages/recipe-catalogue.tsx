@@ -600,6 +600,7 @@ export default function RecipeCatalogue() {
         open={showCreator}
         onClose={handleCloseCreator}
         selectedSubCategory={selectedSubCategory || ""}
+        selectedTemplate={selectedTemplate || ""}
       />
     </div>
   );

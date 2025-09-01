@@ -13,9 +13,16 @@ function Router() {
     <Switch>
       <Route path="/" component={Dashboard} />
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/dashboard/widgets" component={Dashboard} />
+      <Route path="/dashboard/widgets/type/:type" component={Dashboard} />
+      <Route path="/dashboard/widgets/:id" component={Dashboard} />
+      <Route path="/dashboard/placements" component={Dashboard} />
+      <Route path="/dashboard/audience" component={Dashboard} />
+      <Route path="/dashboard/story-bar" component={Dashboard} />
+      <Route path="/dashboard/recipes/catalogue" component={Dashboard} />
+      <Route path="/dashboard/recipes/widgets" component={Dashboard} />
       <Route path="/dashboard/:section" component={Dashboard} />
       <Route path="/dashboard/stories/:sub" component={Dashboard} />
-      <Route path="/dashboard/recipes/widgets" component={Dashboard} />
       <Route path="/design-system" component={StorylyDesignShowcase} />
       <Route path="/sidebar-showcase" component={SidebarShowcase} />
       <Route component={NotFound} />

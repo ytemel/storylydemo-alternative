@@ -325,6 +325,7 @@ export default function WidgetType() {
         open={showCreator}
         onOpenChange={handleCloseCreator}
         widget={selectedWidget}
+        selectedType={widgetType}
       />
     </div>
   );

@@ -12,6 +12,7 @@ export const widgets = pgTable("widgets", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   type: text("type").notNull(), // 'banner', 'story-bar', 'video-feed', 'carousel'
+  isRecipeWidget: boolean("is_recipe_widget").default(false), // true for recipe-only widgets, false for widget only
   parentRecipeId: integer("parent_recipe_id"),
   content: json("content").$type<{
     title?: string;
@@ -36,7 +37,7 @@ export const widgets = pgTable("widgets", {
 export const recipes = pgTable("recipes", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
-  goal: text("goal").notNull(), // 'highlight-promotion', 'launch-product', 'cross-sell', etc.
+  goal: text("goal"), // 'highlight-promotion', 'launch-product', 'cross-sell', etc.
   template: text("template").notNull(), // 'banner-feed', 'story-quiz-card', etc.
   category: text("category").default("standard"), // 'standard', 'widgets-only'
   workflow: json("workflow").$type<{
@@ -63,6 +64,21 @@ export const recipes = pgTable("recipes", {
     conversionRate?: number;
     clickThroughRate?: number;
     impressions?: number;
+  }>(),
+  metadata: json("metadata").$type<{
+    selectedWidgets?: number[];
+    widgetFeedAssociations?: Record<number, {
+      feed?: string;
+      collection?: string;
+      storyGroup?: string;
+      slides?: string[];
+    }>;
+    selectedFeed?: string;
+    selectedCollection?: string;
+    widgetCount?: number;
+    hasAI?: boolean;
+    collectionName?: string;
+    feedName?: string;
   }>(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

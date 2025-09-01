@@ -158,16 +158,100 @@ export class MemStorage implements IStorage {
       updatedAt: new Date(),
     } as Widget;
 
-    // Start with empty widgets - users will create their own
-    // this.widgets.set(widget1.id, widget1);
-    // this.widgets.set(widget2.id, widget2);
+    // Sample Recipe Widgets for testing recipe creation
+    const recipeWidget1 = {
+      id: this.currentWidgetId++,
+      name: "Product Story Bar",
+      type: "story-bar",
+      isRecipeWidget: true,
+      content: {
+        title: "Product Stories",
+        description: "Interactive product showcases",
+      },
+      style: {
+        backgroundColor: "#8B5CF6",
+        textColor: "#FFFFFF",
+        layout: "horizontal",
+        fontSize: "16px",
+      },
+      status: "draft",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as Widget;
 
-    // Commented out sample widgets - users will create their own
-    /*
+    const recipeWidget2 = {
+      id: this.currentWidgetId++,
+      name: "Product Carousel",
+      type: "carousel",
+      isRecipeWidget: true,
+      content: {
+        title: "Featured Products",
+        description: "Scroll through our best items",
+      },
+      style: {
+        backgroundColor: "#10B981",
+        textColor: "#FFFFFF",
+        layout: "horizontal",
+        fontSize: "16px",
+      },
+      status: "draft",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as Widget;
+
+    const recipeWidget3 = {
+      id: this.currentWidgetId++,
+      name: "Product Swipe Cards",
+      type: "swipe-card",
+      isRecipeWidget: true,
+      content: {
+        title: "Interactive Products",
+        description: "Swipe to explore products",
+      },
+      style: {
+        backgroundColor: "#8B5CF6",
+        textColor: "#FFFFFF",
+        layout: "vertical",
+        fontSize: "16px",
+      },
+      status: "draft",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as Widget;
+
+    const recipeWidget4 = {
+      id: this.currentWidgetId++,
+      name: "Product Banner",
+      type: "banner",
+      isRecipeWidget: true,
+      content: {
+        title: "Special Offer",
+        description: "Limited time deals",
+        buttonText: "Shop now",
+      },
+      style: {
+        backgroundColor: "#F59E0B",
+        textColor: "#FFFFFF",
+        layout: "center",
+        fontSize: "18px",
+      },
+      status: "draft",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as Widget;
+
+    // Add recipe widgets to storage
+    this.widgets.set(recipeWidget1.id, recipeWidget1);
+    this.widgets.set(recipeWidget2.id, recipeWidget2);
+    this.widgets.set(recipeWidget3.id, recipeWidget3);
+    this.widgets.set(recipeWidget4.id, recipeWidget4);
+
+    // Sample Standalone Widgets for Widget Library
     const widget3 = {
       id: this.currentWidgetId++,
-      name: "yt-test-banner1",
+      name: "Homepage Banner",
       type: "banner",
+      isRecipeWidget: false,
       content: {
         title: "Big Sale is Coming",
         description: "Limited time offer",
@@ -188,8 +272,9 @@ export class MemStorage implements IStorage {
 
     const widget4 = {
       id: this.currentWidgetId++,
-      name: "android",
+      name: "Mobile Story Bar",
       type: "story-bar",
+      isRecipeWidget: false,
       content: {
         title: "Product Stories",
         description: "Interactive product showcases",
@@ -208,8 +293,9 @@ export class MemStorage implements IStorage {
 
     const widget5 = {
       id: this.currentWidgetId++,
-      name: "yt-test",
+      name: "Brand Story Bar",
       type: "story-bar",
+      isRecipeWidget: false,
       content: {
         title: "Brand Stories",
         description: "Engaging brand content",
@@ -228,8 +314,9 @@ export class MemStorage implements IStorage {
 
     const widget6 = {
       id: this.currentWidgetId++,
-      name: "Product Swipe Cards",
+      name: "Homepage Swipe Cards",
       type: "swipe-card",
+      isRecipeWidget: false,
       content: {
         title: "Interactive Products",
         description: "Swipe to explore products",
@@ -248,8 +335,9 @@ export class MemStorage implements IStorage {
 
     const widget7 = {
       id: this.currentWidgetId++,
-      name: "Product Carousel",
+      name: "Featured Carousel",
       type: "carousel",
+      isRecipeWidget: false,
       content: {
         title: "Featured Products",
         description: "Scroll through our best items",
@@ -270,6 +358,7 @@ export class MemStorage implements IStorage {
       id: this.currentWidgetId++,
       name: "Flash Sale Countdown",
       type: "countdown",
+      isRecipeWidget: false,
       content: {
         title: "Flash Sale",
         description: "Limited time offer ending soon",
@@ -291,6 +380,7 @@ export class MemStorage implements IStorage {
       id: this.currentWidgetId++,
       name: "Style Quiz",
       type: "quiz",
+      isRecipeWidget: false,
       content: {
         title: "Find Your Style",
         description: "Take our style quiz",
@@ -314,8 +404,9 @@ export class MemStorage implements IStorage {
 
     const widget10 = {
       id: this.currentWidgetId++,
-      name: "Video Feed",
+      name: "Product Video Feed",
       type: "video-feed",
+      isRecipeWidget: false,
       content: {
         title: "Product Videos",
         description: "Watch product demonstrations",
@@ -332,6 +423,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date(),
     } as Widget;
 
+    // Add standalone widgets to storage
     this.widgets.set(widget3.id, widget3);
     this.widgets.set(widget4.id, widget4);
     this.widgets.set(widget5.id, widget5);
@@ -340,7 +432,6 @@ export class MemStorage implements IStorage {
     this.widgets.set(widget8.id, widget8);
     this.widgets.set(widget9.id, widget9);
     this.widgets.set(widget10.id, widget10);
-    */
 
     // Sample recipes
     const recipe1 = {

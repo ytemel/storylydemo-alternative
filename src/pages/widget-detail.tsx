@@ -16,7 +16,8 @@ import {
   Eye,
   Play,
   Pause,
-  Archive
+  Archive,
+  Trash2
 } from "lucide-react";
 import type { Widget, Placement } from "@/shared/schema";
 
@@ -31,10 +32,7 @@ export default function WidgetDetail() {
   
   const { data: widget, isLoading } = useQuery<Widget>({
     queryKey: ["/api/widgets", widgetId],
-    queryFn: async () => {
-      const result = await apiRequest("GET", `/api/widgets/${widgetId}`);
-      return result as Widget;
-    },
+    queryFn: () => apiRequest("GET", `/api/widgets/${widgetId}`),
     enabled: !!widgetId,
   });
   
@@ -62,6 +60,34 @@ export default function WidgetDetail() {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      return apiRequest("DELETE", `/api/widgets`, undefined, parseInt(widgetId!));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/widgets"] });
+      toast({
+        title: "Widget deleted",
+        description: "The widget has been successfully deleted.",
+      });
+      // Navigate back to widgets page
+      setLocation("/dashboard/widgets");
+    },
+    onError: () => {
+      toast({
+        title: "Error deleting widget",
+        description: "There was an error deleting the widget. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDeleteWidget = () => {
+    if (confirm("Are you sure you want to delete this widget? This action cannot be undone.")) {
+      deleteMutation.mutate();
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="animate-fade-in">
@@ -84,7 +110,7 @@ export default function WidgetDetail() {
   }
 
   const appliedPlacements = placements.filter(p => 
-    p.widgetId === widget.id
+    p.widgetIds?.includes(widget.id)
   );
 
   return (
@@ -139,6 +165,14 @@ export default function WidgetDetail() {
                   Activate
                 </>
               )}
+            </Button>
+            <Button 
+              variant="destructive"
+              onClick={handleDeleteWidget}
+              disabled={deleteMutation.isPending}
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              {deleteMutation.isPending ? "Deleting..." : "Delete"}
             </Button>
           </div>
         </div>

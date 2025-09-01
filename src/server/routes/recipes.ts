@@ -60,6 +60,7 @@ export async function createRecipe(recipeData: InsertRecipe) {
       const widget: InsertWidget = {
         name: widgetName,
         type: widgetType as any,
+        isRecipeWidget: true,
         parentRecipeId: recipe.id,
         status: "draft",
         content: {},

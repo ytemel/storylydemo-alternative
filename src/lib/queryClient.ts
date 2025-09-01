@@ -15,6 +15,7 @@ import {
   createWidget,
   deleteWidget,
   getWidgets,
+  getWidget,
   updateWidget,
 } from "@/server/routes/widgets";
 import {
@@ -67,7 +68,17 @@ export async function apiRequest(
   data?: unknown | undefined,
   id?: number
 ) {
-  if (method === "POST") {
+  if (method === "GET") {
+    // Handle individual widget requests
+    if (url.startsWith("/api/widgets/") && url !== "/api/widgets") {
+      const widgetId = url.split("/").pop();
+      // @ts-ignore
+      return await getWidget(widgetId);
+    }
+    // Handle other GET requests through the regular query function
+    // @ts-ignore
+    return await mockGetServer[url as keyof typeof mockGetServer]();
+  } else if (method === "POST") {
     // @ts-ignore
     try {
       // @ts-ignore
