@@ -10,7 +10,7 @@ import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import WidgetCreator from "@/components/widget-creator";
-import { Plus, Edit, Trash2, Image, Video, BarChart3, Search, MoreVertical } from "lucide-react";
+import { Plus, Edit, Trash2, Image, Video, BarChart3, Search, MoreVertical, Clock, CheckSquare, Grid3X3, Play, Zap } from "lucide-react";
 import { WIDGET_DEFINITIONS } from "@/lib/widget-definitions";
 import type { Widget } from "@/shared/schema";
 import WidgetDetailsDrawer from "@/components/widget-details-drawer";
@@ -24,51 +24,199 @@ const WIDGET_ONLY_TYPES = [
     name: 'Story bar',
     description: 'Instagram-style stories for your website',
     icon: Video,
-    preview: '/story-bar-preview.png'
+    preview: {
+      type: 'story-bar',
+      title: 'Summer Collection',
+      subtitle: '3 stories available',
+      progress: 2
+    }
   },
   {
     id: 'video-feed', 
     name: 'Video feed',
     description: 'Showcase videos in grid or carousel format',
     icon: Video,
-    preview: '/video-feed-preview.png'
+    preview: {
+      type: 'video-feed',
+      videos: 6,
+      layout: 'grid'
+    }
   },
   {
     id: 'banner',
     name: 'Banner',
     description: 'Promotional banners with images and text',
     icon: Image,
-    preview: '/banner-preview.png'
+    preview: {
+      type: 'banner',
+      title: 'Flash Sale',
+      subtitle: '50% OFF',
+      cta: 'Shop Now'
+    }
   },
   {
     id: 'swipe-card',
     name: 'Swipe Card', 
     description: 'Interactive swipeable product cards',
     icon: Image,
-    preview: '/swipe-card-preview.png'
+    preview: {
+      type: 'swipe-card',
+      products: 4,
+      current: 1
+    }
   },
   {
     id: 'canvas',
     name: 'Canvas',
     description: 'Flexible content canvas widget',
     icon: Image,
-    preview: '/canvas-preview.png'
+    preview: {
+      type: 'canvas',
+      elements: ['text', 'image', 'button'],
+      layout: 'flexible'
+    }
   },
   {
     id: 'quiz',
     name: 'Quiz',
     description: 'Interactive quizzes and polls',
     icon: Image,
-    preview: '/quiz-preview.png'
+    preview: {
+      type: 'quiz',
+      question: 'What\'s your style?',
+      options: ['Classic', 'Modern', 'Bold']
+    }
   },
   {
     id: 'countdown',
     name: 'Countdown',
     description: 'Urgency-driving countdown timers',
     icon: Image,
-    preview: '/countdown-preview.png'
+    preview: {
+      type: 'countdown',
+      time: '02:45:30',
+      message: 'Sale ends in'
+    }
   }
 ];
+
+// Widget Preview Card Component
+interface WidgetPreviewData {
+  type: string;
+  [key: string]: any;
+}
+
+function WidgetPreviewCard({ preview }: { preview: WidgetPreviewData }) {
+  const renderPreview = () => {
+    switch (preview.type) {
+      case 'story-bar':
+        return (
+          <div className="h-24 bg-gradient-to-br from-purple-100 to-pink-100 rounded-md p-3 flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-medium text-purple-700">{preview.title}</span>
+              <span className="text-xs text-purple-600">{preview.subtitle}</span>
+            </div>
+            <div className="flex gap-1">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className={`h-1.5 rounded-full flex-1 ${
+                    i <= preview.progress ? 'bg-purple-500' : 'bg-purple-200'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'video-feed':
+        return (
+          <div className="h-24 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-md p-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium text-blue-700">{preview.videos} videos</span>
+              <Grid3X3 className="w-4 h-4 text-blue-600" />
+            </div>
+            <div className="grid grid-cols-3 gap-1">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="w-full h-3 bg-blue-300 rounded" />
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'banner':
+        return (
+          <div className="h-24 bg-gradient-to-br from-orange-100 to-red-100 rounded-md p-3 flex flex-col justify-center text-center">
+            <div className="text-xs font-bold text-orange-800 mb-1">{preview.title}</div>
+            <div className="text-lg font-bold text-red-600 mb-2">{preview.subtitle}</div>
+            <div className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full inline-block">
+              {preview.cta}
+            </div>
+          </div>
+        );
+
+      case 'swipe-card':
+        return (
+          <div className="h-24 bg-gradient-to-br from-green-100 to-emerald-100 rounded-md p-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium text-green-700">{preview.current}/{preview.products}</span>
+              <Image className="w-4 h-4 text-green-600" />
+            </div>
+            <div className="flex gap-1">
+              <div className="w-16 h-8 bg-green-300 rounded border-2 border-green-500" />
+              <div className="w-16 h-8 bg-green-200 rounded opacity-50" />
+              <div className="w-16 h-8 bg-green-200 rounded opacity-50" />
+            </div>
+          </div>
+        );
+
+      case 'canvas':
+        return (
+          <div className="h-24 bg-gradient-to-br from-gray-100 to-slate-100 rounded-md p-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium text-gray-700">Canvas</span>
+              <Grid3X3 className="w-4 h-4 text-gray-600" />
+            </div>
+            <div className="flex gap-1">
+              <div className="w-8 h-6 bg-gray-300 rounded text-xs flex items-center justify-center">T</div>
+              <div className="w-8 h-6 bg-gray-300 rounded text-xs flex items-center justify-center">I</div>
+              <div className="w-8 h-6 bg-gray-300 rounded text-xs flex items-center justify-center">B</div>
+            </div>
+          </div>
+        );
+
+      case 'quiz':
+        return (
+          <div className="h-24 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-md p-3">
+            <div className="text-xs font-medium text-indigo-700 mb-2">{preview.question}</div>
+            <div className="space-y-1">
+              {preview.options.map((option: string, i: number) => (
+                <div key={i} className="h-2 bg-indigo-200 rounded" />
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'countdown':
+        return (
+          <div className="h-24 bg-gradient-to-br from-red-100 to-pink-100 rounded-md p-3 text-center">
+            <div className="text-xs text-red-600 mb-1">{preview.message}</div>
+            <div className="text-lg font-mono font-bold text-red-700 mb-2">{preview.time}</div>
+            <Clock className="w-4 h-4 text-red-600 mx-auto" />
+          </div>
+        );
+
+      default:
+        return (
+          <div className="h-24 bg-gray-100 rounded-md flex items-center justify-center">
+            <Image className="w-8 h-8 text-gray-400" />
+          </div>
+        );
+    }
+  };
+
+  return renderPreview();
+}
 
 export default function Widgets() {
   const { toast } = useToast();
@@ -198,10 +346,8 @@ export default function Widgets() {
                     <h3 className="font-semibold text-lg">{widgetType.name}</h3>
                   </div>
                   <p className="text-sm text-muted-foreground mb-4">{widgetType.description}</p>
-                  {/* Preview placeholder */}
-                  <div className="h-24 bg-gray-100 rounded-md flex items-center justify-center">
-                    <Icon className="w-8 h-8 text-gray-400" />
-                  </div>
+                  {/* Widget Preview */}
+                  <WidgetPreviewCard preview={widgetType.preview} />
                 </CardContent>
               </Card>
             );
