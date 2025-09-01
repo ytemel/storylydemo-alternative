@@ -72,27 +72,49 @@ export async function apiRequest(
     // Handle individual widget requests
     if (url.startsWith("/api/widgets/") && url !== "/api/widgets") {
       const widgetId = url.split("/").pop();
-      // @ts-ignore
-      return await getWidget(widgetId);
+      if (!widgetId) {
+        throw new Error("Invalid widget ID");
+      }
+      const result = await getWidget(widgetId);
+      if (!result) {
+        throw new Error("Widget not found");
+      }
+      return result;
     }
     // Handle other GET requests through the regular query function
-    // @ts-ignore
-    return await mockGetServer[url as keyof typeof mockGetServer]();
+    const result = await mockGetServer[url as keyof typeof mockGetServer]();
+    if (!result) {
+      throw new Error("No data returned");
+    }
+    return result;
   } else if (method === "POST") {
-    // @ts-ignore
     try {
-      // @ts-ignore
-      return await mockPostServer[url as keyof typeof mockPostServer](data);
+      const result = await mockPostServer[url as keyof typeof mockPostServer](data as any);
+      if (!result) {
+        throw new Error("No data returned");
+      }
+      return result;
     } catch (e: any) {
       throw new Error(e?.message || "Request failed");
     }
   } else if (method === "PUT") {
-    // @ts-ignore
-    return mockPutServer[url as keyof typeof mockPutServer](id, data);
+    if (id === undefined) {
+      throw new Error("ID is required for PUT requests");
+    }
+    const result = await mockPutServer[url as keyof typeof mockPutServer](id.toString(), data as any);
+    if (!result) {
+      throw new Error("No data returned");
+    }
+    return result;
   } else if (method === "DELETE") {
-    // @ts-ignore
-    return mockDeleteServer[url as keyof typeof mockDeleteServer](id);
+    if (id === undefined) {
+      throw new Error("ID is required for DELETE requests");
+    }
+    const result = await mockDeleteServer[url as keyof typeof mockDeleteServer](id.toString());
+    // DELETE operations might return void, so we don't check for result
+    return result;
   }
+  throw new Error("Unsupported HTTP method");
 }
 
 export const getQueryFn =

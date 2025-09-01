@@ -252,6 +252,7 @@ export class MemStorage implements IStorage {
       name: "Homepage Banner",
       type: "banner",
       isRecipeWidget: false,
+      parentRecipeId: null,
       content: {
         title: "Big Sale is Coming",
         description: "Limited time offer",
@@ -275,6 +276,7 @@ export class MemStorage implements IStorage {
       name: "Mobile Story Bar",
       type: "story-bar",
       isRecipeWidget: false,
+      parentRecipeId: null,
       content: {
         title: "Product Stories",
         description: "Interactive product showcases",
@@ -296,6 +298,7 @@ export class MemStorage implements IStorage {
       name: "Brand Story Bar",
       type: "story-bar",
       isRecipeWidget: false,
+      parentRecipeId: null,
       content: {
         title: "Brand Stories",
         description: "Engaging brand content",
@@ -317,6 +320,7 @@ export class MemStorage implements IStorage {
       name: "Homepage Swipe Cards",
       type: "swipe-card",
       isRecipeWidget: false,
+      parentRecipeId: null,
       content: {
         title: "Interactive Products",
         description: "Swipe to explore products",
@@ -338,6 +342,7 @@ export class MemStorage implements IStorage {
       name: "Featured Carousel",
       type: "carousel",
       isRecipeWidget: false,
+      parentRecipeId: null,
       content: {
         title: "Featured Products",
         description: "Scroll through our best items",
@@ -359,6 +364,7 @@ export class MemStorage implements IStorage {
       name: "Flash Sale Countdown",
       type: "countdown",
       isRecipeWidget: false,
+      parentRecipeId: null,
       content: {
         title: "Flash Sale",
         description: "Limited time offer ending soon",
@@ -381,6 +387,7 @@ export class MemStorage implements IStorage {
       name: "Style Quiz",
       type: "quiz",
       isRecipeWidget: false,
+      parentRecipeId: null,
       content: {
         title: "Find Your Style",
         description: "Take our style quiz",
@@ -407,6 +414,7 @@ export class MemStorage implements IStorage {
       name: "Product Video Feed",
       type: "video-feed",
       isRecipeWidget: false,
+      parentRecipeId: null,
       content: {
         title: "Product Videos",
         description: "Watch product demonstrations",
@@ -470,6 +478,16 @@ export class MemStorage implements IStorage {
         clickThroughRate: 8.5,
         impressions: 15000,
       },
+      metadata: {
+        selectedWidgets: [],
+        widgetFeedAssociations: {},
+        selectedFeed: "",
+        selectedCollection: "",
+        widgetCount: 0,
+        hasAI: true,
+        collectionName: "",
+        feedName: "",
+      },
       createdAt: new Date(),
       updatedAt: new Date(),
     } as Recipe;
@@ -511,6 +529,16 @@ export class MemStorage implements IStorage {
         clickThroughRate: 12.3,
         impressions: 5000,
       },
+      metadata: {
+        selectedWidgets: [],
+        widgetFeedAssociations: {},
+        selectedFeed: "",
+        selectedCollection: "",
+        widgetCount: 0,
+        hasAI: false,
+        collectionName: "",
+        feedName: "",
+      },
       createdAt: new Date(),
       updatedAt: new Date(),
     } as Recipe;
@@ -550,6 +578,16 @@ export class MemStorage implements IStorage {
         conversionRate: 6.8,
         clickThroughRate: 15.2,
         impressions: 8500,
+      },
+      metadata: {
+        selectedWidgets: [],
+        widgetFeedAssociations: {},
+        selectedFeed: "",
+        selectedCollection: "",
+        widgetCount: 0,
+        hasAI: true,
+        collectionName: "",
+        feedName: "",
       },
       createdAt: new Date(),
       updatedAt: new Date(),

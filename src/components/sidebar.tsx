@@ -93,14 +93,6 @@ export default function Sidebar() {
                   </div>
                   
                   <div className="flex items-center gap-2">
-                    {item.badge && (
-                      <span className={cn(
-                        storylyStyles.badge(item.badge === 'New' ? 'purple' : 'default'),
-                        "text-xs px-2 py-0.5"
-                      )}>
-                        {item.badge}
-                      </span>
-                    )}
                     {item.name === 'Recipes' && (
                       <ChevronRight size={16} className={cn(
                         "transition-transform duration-150",

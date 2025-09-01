@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { getWidget } from "@/server/routes/widgets";
 import { useLocation } from "wouter";
 import WidgetCreator from "@/components/widget-creator";
 import { 
@@ -32,7 +33,12 @@ export default function WidgetDetail() {
   
   const { data: widget, isLoading } = useQuery<Widget>({
     queryKey: ["/api/widgets", widgetId],
-    queryFn: () => apiRequest("GET", `/api/widgets/${widgetId}`),
+    queryFn: async () => {
+      if (!widgetId) throw new Error("No widget ID");
+      const result = await getWidget(widgetId);
+      if (!result) throw new Error("Widget not found");
+      return result;
+    },
     enabled: !!widgetId,
   });
   
@@ -110,7 +116,7 @@ export default function WidgetDetail() {
   }
 
   const appliedPlacements = placements.filter(p => 
-    p.widgetIds?.includes(widget.id)
+    p.widgetId === widget.id
   );
 
   return (

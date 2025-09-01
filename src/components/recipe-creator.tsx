@@ -197,11 +197,11 @@ export default function RecipeCreator({
       template: recipe.template as any,
       category: recipe.category as any,
       aiPersonalization: recipe.aiPersonalization || false,
-      conditions: recipe.conditions || [],
+      conditions: [],
       status: recipe.status as any,
-      goal: recipe.goal,
-      logic: recipe.logic,
-      configuration: recipe.configuration,
+      goal: recipe.goal || "",
+      logic: "",
+      configuration: {},
     } : {
       name: "",
       template: selectedRecipeTemplate as any,
@@ -243,9 +243,7 @@ export default function RecipeCreator({
     },
   });
 
-  const onSubmit: import("react-hook-form").SubmitHandler<RecipeFormData> = (
-    data
-  ) => {
+  const onSubmit = (data: RecipeFormData) => {
     // Enhance the form data with additional collected information
     const enhancedData = {
       ...data,
@@ -1288,7 +1286,7 @@ export default function RecipeCreator({
                   !form.watch("placementId")
                 }
                 className="bg-purple-600 hover:bg-purple-700"
-                onClick={form.handleSubmit(onSubmit)}
+                onClick={() => form.handleSubmit(onSubmit)()}
               >
                 {createMutation.isPending ? "Creating..." : recipe ? "Update Recipe" : "Create Recipe"}
               </Button>
