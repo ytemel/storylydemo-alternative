@@ -31,7 +31,10 @@ export default function WidgetDetail() {
   
   const { data: widget, isLoading } = useQuery<Widget>({
     queryKey: ["/api/widgets", widgetId],
-    queryFn: () => apiRequest("GET", `/api/widgets/${widgetId}`),
+    queryFn: async () => {
+      const result = await apiRequest("GET", `/api/widgets/${widgetId}`);
+      return result as Widget;
+    },
     enabled: !!widgetId,
   });
   
@@ -81,7 +84,7 @@ export default function WidgetDetail() {
   }
 
   const appliedPlacements = placements.filter(p => 
-    p.widgetIds?.includes(widget.id)
+    p.widgetId === widget.id
   );
 
   return (
