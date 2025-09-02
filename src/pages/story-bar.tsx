@@ -139,10 +139,6 @@ export default function StoryBar() {
                   <SelectItem value="archived">Archived</SelectItem>
                 </SelectContent>
               </Select>
-              <Button variant="outline" onClick={() => setShowCreator(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                Create Story Bar
-              </Button>
             </div>
           </div>
         </div>

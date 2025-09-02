@@ -186,9 +186,13 @@ export class MemStorage implements IStorage {
       name: "Product Swipe Cards",
       type: "swipe-card",
       isRecipeWidget: true,
+      parentRecipeId: null,
+      placementId: null,
       content: {
         title: "Interactive Products",
         description: "Swipe to explore products",
+        collection: "Summer collection 2025",
+        audience: "New subscribers",
       },
       style: {
         backgroundColor: "#8B5CF6",
@@ -352,12 +356,266 @@ export class MemStorage implements IStorage {
       updatedAt: new Date(),
     } as Widget;
 
+    // Add more swipe card widgets to match the design reference
+    const swipeCard1 = {
+      id: this.currentWidgetId++,
+      name: "Summer sale recommendation",
+      type: "swipe-card",
+      isRecipeWidget: false,
+      parentRecipeId: null,
+      content: {
+        title: "Summer Sale",
+        description: "Live now",
+        collection: "Summer collection 2025",
+        audience: "New subscribers",
+        slides: ["product1.jpg", "product2.jpg", "product3.jpg", "product4.jpg"],
+      },
+      style: {
+        backgroundColor: "#10B981",
+        textColor: "#FFFFFF",
+        layout: "horizontal",
+        fontSize: "16px",
+      },
+      placementId: placement1.id,
+      status: "active",
+      scheduledAt: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as Widget;
+
+    const swipeCard2 = {
+      id: this.currentWidgetId++,
+      name: "New summer collection",
+      type: "swipe-card",
+      isRecipeWidget: false,
+      parentRecipeId: null,
+      content: {
+        title: "New Collection",
+        description: "Summer vibes",
+        collection: "Summer collection 2025",
+        audience: "No audience",
+        slides: ["summer1.jpg", "summer2.jpg", "summer3.jpg", "summer4.jpg"],
+      },
+      style: {
+        backgroundColor: "#8B5CF6",
+        textColor: "#FFFFFF",
+        layout: "horizontal",
+        fontSize: "16px",
+      },
+      placementId: placement2.id,
+      status: "scheduled",
+      scheduledAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as Widget;
+
+    const swipeCard3 = {
+      id: this.currentWidgetId++,
+      name: "Summer sale",
+      type: "swipe-card",
+      isRecipeWidget: false,
+      parentRecipeId: null,
+      content: {
+        title: "Summer Sale",
+        description: "Live now - Ends 2026-09-30",
+        collection: "Summer collection 2025",
+        audience: "Holiday shoppers + Labels",
+        slides: ["sale1.jpg", "sale2.jpg", "sale3.jpg", "sale4.jpg"],
+      },
+      style: {
+        backgroundColor: "#F59E0B",
+        textColor: "#FFFFFF",
+        layout: "horizontal",
+        fontSize: "16px",
+      },
+      placementId: placement1.id,
+      status: "active",
+      scheduledAt: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as Widget;
+
+    const swipeCard4 = {
+      id: this.currentWidgetId++,
+      name: "Spring pro",
+      type: "swipe-card",
+      isRecipeWidget: false,
+      parentRecipeId: null,
+      content: {
+        title: "Spring Collection",
+        description: "Professional spring looks",
+        collection: "Summer collection 2025",
+        audience: "Labels",
+        slides: ["spring1.jpg", "spring2.jpg", "spring3.jpg", "spring4.jpg"],
+      },
+      style: {
+        backgroundColor: "#EC4899",
+        textColor: "#FFFFFF",
+        layout: "horizontal",
+        fontSize: "16px",
+      },
+      placementId: placement2.id,
+      status: "scheduled",
+      scheduledAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Next week
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as Widget;
+
+    const swipeCard5 = {
+      id: this.currentWidgetId++,
+      name: "Winter collection",
+      type: "swipe-card",
+      isRecipeWidget: false,
+      parentRecipeId: null,
+      content: {
+        title: "Winter Collection",
+        description: "Cozy winter styles",
+        collection: "Summer collection 2025",
+        audience: "No audience",
+        slides: ["winter1.jpg", "winter2.jpg", "winter3.jpg", "winter4.jpg"],
+      },
+      style: {
+        backgroundColor: "#6B7280",
+        textColor: "#FFFFFF",
+        layout: "horizontal",
+        fontSize: "16px",
+      },
+      placementId: placement1.id,
+      status: "inactive",
+      scheduledAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Next month
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as Widget;
+
     // Add standalone widgets to storage
     this.widgets.set(widget3.id, widget3);
     this.widgets.set(widget4.id, widget4);
     this.widgets.set(widget8.id, widget8);
     this.widgets.set(widget9.id, widget9);
     this.widgets.set(widget10.id, widget10);
+    
+    // Add swipe card widgets to storage
+    this.widgets.set(swipeCard1.id, swipeCard1);
+    this.widgets.set(swipeCard2.id, swipeCard2);
+    this.widgets.set(swipeCard3.id, swipeCard3);
+    this.widgets.set(swipeCard4.id, swipeCard4);
+    this.widgets.set(swipeCard5.id, swipeCard5);
+
+    // Add more banner widgets to match the design reference
+    const banner1 = {
+      id: this.currentWidgetId++,
+      name: "yt1",
+      type: "banner",
+      isRecipeWidget: false,
+      parentRecipeId: null,
+      content: {
+        title: "Banner yt1",
+        description: "Promotional banner content",
+        buttonText: "Learn More",
+        audience: "None",
+        imageUrl: "banner1.jpg",
+      },
+      style: {
+        backgroundColor: "#6366F1",
+        textColor: "#FFFFFF",
+        layout: "center",
+        fontSize: "18px",
+      },
+      placementId: placement1.id,
+      status: "active",
+      scheduledAt: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as Widget;
+
+    const banner2 = {
+      id: this.currentWidgetId++,
+      name: "yt2",
+      type: "banner",
+      isRecipeWidget: false,
+      parentRecipeId: null,
+      content: {
+        title: "Banner yt2",
+        description: "Secondary banner content", 
+        buttonText: "Shop Now",
+        audience: "None",
+        imageUrl: "banner2.jpg",
+      },
+      style: {
+        backgroundColor: "#8B5CF6",
+        textColor: "#FFFFFF",
+        layout: "center",
+        fontSize: "18px",
+      },
+      placementId: placement2.id,
+      status: "active",
+      scheduledAt: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as Widget;
+
+    // Add banner widgets to storage
+    this.widgets.set(banner1.id, banner1);
+    this.widgets.set(banner2.id, banner2);
+
+    // Add more story bar widgets to match the design reference
+    const storyBar1 = {
+      id: this.currentWidgetId++,
+      name: "Personalization",
+      type: "story-bar",
+      isRecipeWidget: false,
+      parentRecipeId: null,
+      content: {
+        title: "Personalization Story Group",
+        description: "AI-powered personalized stories",
+        audience: "Audience",
+        storyGroup: "Personalization",
+        hasPersonalization: true,
+        imageUrl: "personalization.jpg",
+      },
+      style: {
+        backgroundColor: "#6366F1",
+        textColor: "#FFFFFF",
+        layout: "circular",
+        fontSize: "16px",
+      },
+      placementId: placement1.id,
+      status: "active",
+      scheduledAt: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as Widget;
+
+    const storyBar2 = {
+      id: this.currentWidgetId++,
+      name: "YT1",
+      type: "story-bar",
+      isRecipeWidget: false,
+      parentRecipeId: null,
+      content: {
+        title: "YT1 Story Group",
+        description: "Featured story content",
+        audience: "Audience",
+        storyGroup: "YT1",
+        hasPersonalization: true,
+        imageUrl: "yt1-story.jpg",
+      },
+      style: {
+        backgroundColor: "#8B5CF6",
+        textColor: "#FFFFFF",
+        layout: "circular",
+        fontSize: "16px",
+      },
+      placementId: placement2.id,
+      status: "active",
+      scheduledAt: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as Widget;
+
+    // Add story bar widgets to storage
+    this.widgets.set(storyBar1.id, storyBar1);
+    this.widgets.set(storyBar2.id, storyBar2);
 
     // Sample recipes
     const recipe1 = {

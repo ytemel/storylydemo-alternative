@@ -139,6 +139,506 @@ export default function WidgetType() {
   const typeInfo = getWidgetTypeInfo(widgetType || '');
   const Icon = typeInfo.icon;
 
+  // Special layout for swipe cards to match the design reference
+  if (widgetType === 'swipe-card') {
+    return (
+      <div className="animate-fade-in">
+        {/* Header */}
+        <header className="bg-card border-b border-border px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <Grid3X3 className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">Swipe Card</h1>
+                <p className="text-muted-foreground">Interactive swipeable product cards</p>
+              </div>
+            </div>
+            <Button onClick={handleCreateNew}>
+              <Plus className="w-4 h-4 mr-2" />
+              Create new
+            </Button>
+          </div>
+        </header>
+
+        <div className="p-6">
+              {/* Top section with tabs and filters */}
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-6">
+                  <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+                    <Image className="w-5 h-5" />
+                    Content
+                  </h2>
+                  <div className="flex items-center gap-4">
+                    <select className="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                      <option>New bar widget</option>
+                    </select>
+                    <select className="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                      <option>Labels</option>
+                    </select>
+                    <select className="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                      <option>Audiences</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="w-6 h-6">
+                  <Search className="w-4 h-4 text-gray-400" />
+                </div>
+              </div>
+
+              {/* Status tabs */}
+              <div className="flex gap-1 mb-6 border-b border-gray-200">
+                <button className="px-4 py-2 text-sm font-medium text-gray-900 border-b-2 border-gray-900">
+                  All ({filteredWidgets.length})
+                </button>
+                <button className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
+                  Active ({filteredWidgets.filter(w => w.status === 'active').length})
+                </button>
+                <button className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
+                  Inactive ({filteredWidgets.filter(w => w.status === 'inactive').length})
+                </button>
+                <button className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
+                  Archived ({filteredWidgets.filter(w => w.status === 'archived').length})
+                </button>
+              </div>
+
+          {/* Content list */}
+          <div className="space-y-4">
+            {filteredWidgets.map((widget) => {
+              const isRecipeWidget = (widget as any).isRecipeWidget;
+              const content = widget.content as any;
+              const isActive = widget.status === 'active';
+              const isScheduled = widget.status === 'scheduled';
+              const isInactive = widget.status === 'inactive';
+              
+              return (
+                <div key={widget.id} className="bg-white border border-gray-200 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4 flex-1">
+                      {/* Status indicator */}
+                      <div className="flex items-center gap-2">
+                        <div className={`w-3 h-3 rounded-full ${
+                          isActive ? 'bg-green-500' :
+                          isScheduled ? 'bg-blue-500' : 'bg-gray-400'
+                        }`} />
+                        <span className="text-sm font-medium text-gray-900">{widget.name}</span>
+                      </div>
+
+                      {/* Widget type badge */}
+                      <Badge 
+                        variant="outline" 
+                        className={`text-xs ${isRecipeWidget ? "bg-purple-50 text-purple-700 border-purple-200" : "bg-blue-50 text-blue-700 border-blue-200"}`}
+                      >
+                        {isRecipeWidget ? 'Recipe' : 'Widget Only'}
+                      </Badge>
+
+                      {/* Status badge */}
+                      <Badge variant={isActive ? 'default' : isScheduled ? 'secondary' : 'outline'} className="text-xs">
+                        {isActive ? 'Active' : isScheduled ? 'Scheduled' : 'Inactive'}
+                      </Badge>
+                    </div>
+
+                    {/* Actions */}
+                    <Button variant="ghost" size="sm">
+                      <MoreVertical className="w-4 h-4" />
+                    </Button>
+                  </div>
+
+                  {/* Content details */}
+                  <div className="mt-3 flex items-center gap-6 text-sm text-gray-600">
+                    {/* Timing */}
+                    <div className="flex items-center gap-1">
+                      <span>{isActive ? 'Live now' : isScheduled ? 'Scheduled for' : 'Inactive'}</span>
+                      {isScheduled && (
+                        <span>
+                          {widget.scheduledAt ? new Date(widget.scheduledAt as any).toLocaleDateString() : 'Soon'}
+                        </span>
+                      )}
+                      {content.description && content.description.includes('Ends') && (
+                        <span> - {content.description}</span>
+                      )}
+                    </div>
+
+                    {/* Collection */}
+                    {content.collection && (
+                      <div className="flex items-center gap-1">
+                        <span>🔗</span>
+                        <span>{content.collection}</span>
+                      </div>
+                    )}
+
+                    {/* Audience */}
+                    {content.audience && (
+                      <div className="flex items-center gap-1">
+                        <span>👥</span>
+                        <span>{content.audience}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Thumbnail images */}
+                  {content.slides && (
+                    <div className="mt-3 flex gap-2">
+                      {content.slides.slice(0, 4).map((slide: string, index: number) => (
+                        <div key={index} className="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center">
+                          <Image className="w-6 h-6 text-gray-400" />
+                        </div>
+                      ))}
+                      {content.slides.length > 4 && (
+                        <div className="w-12 h-12 bg-gray-100 rounded-md flex items-center justify-center text-xs text-gray-500">
+                          +{content.slides.length - 4}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <WidgetCreator
+          open={showCreator}
+          onOpenChange={handleCloseCreator}
+          widget={selectedWidget}
+          selectedType={widgetType}
+        />
+      </div>
+    );
+  }
+
+  // Special layout for banner widgets to match the design reference
+  if (widgetType === 'banner') {
+    return (
+      <div className="animate-fade-in">
+        {/* Header */}
+        <header className="bg-card border-b border-border px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <Image className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">Banner</h1>
+                <p className="text-muted-foreground">Promotional banners with images and text</p>
+              </div>
+            </div>
+            <Button onClick={handleCreateNew}>
+              <Plus className="w-4 h-4 mr-2" />
+              Create new
+            </Button>
+          </div>
+        </header>
+
+        <div className="p-6">
+          {/* Top section with filters */}
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-6">
+              <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+                <Image className="w-5 h-5" />
+                Content
+              </h2>
+              <div className="flex items-center gap-4">
+                <select className="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                  <option>Banner ytyt</option>
+                </select>
+                <select className="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                  <option>Labels</option>
+                </select>
+                <select className="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                  <option>Audiences</option>
+                </select>
+              </div>
+            </div>
+            <div className="w-6 h-6">
+              <Search className="w-4 h-4 text-gray-400" />
+            </div>
+          </div>
+
+          {/* Status tabs */}
+          <div className="flex gap-1 mb-6 border-b border-gray-200">
+            <button className="px-4 py-2 text-sm font-medium text-gray-900 border-b-2 border-gray-900">
+              All ({filteredWidgets.length})
+            </button>
+            <button className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
+              Active ({filteredWidgets.filter(w => w.status === 'active').length})
+            </button>
+            <button className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
+              Inactive (0)
+            </button>
+            <button className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
+              Test (0)
+            </button>
+            <button className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
+              Archived ({filteredWidgets.filter(w => w.status === 'archived').length})
+            </button>
+          </div>
+
+          {/* Table-based layout matching the design reference */}
+          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Slide</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Status</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Audience</th>
+                  <th className="text-right py-3 px-4 text-sm font-medium text-gray-600">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {filteredWidgets.map((widget) => {
+                  const isRecipeWidget = (widget as any).isRecipeWidget;
+                  const content = widget.content as any;
+                  const isActive = widget.status === 'active';
+                  
+                  return (
+                    <tr key={widget.id} className="hover:bg-gray-50">
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-4">
+                          {/* Selection checkbox */}
+                          <div className="w-5 h-5 border border-gray-300 rounded flex items-center justify-center">
+                            <div className="w-3 h-3 rounded-full bg-gray-200"></div>
+                          </div>
+                          
+                          {/* Thumbnail */}
+                          <div className="w-16 h-12 bg-gray-200 rounded-md flex items-center justify-center">
+                            <Image className="w-6 h-6 text-gray-400" />
+                          </div>
+                          
+                          {/* Widget info */}
+                          <div className="flex flex-col">
+                            <span className="text-sm font-medium text-gray-900">{widget.name}</span>
+                            {/* Widget type badge */}
+                            <Badge 
+                              variant="outline" 
+                              className={`text-xs mt-1 w-fit ${isRecipeWidget ? "bg-purple-50 text-purple-700 border-purple-200" : "bg-blue-50 text-blue-700 border-blue-200"}`}
+                            >
+                              {isRecipeWidget ? 'Recipe' : 'Widget Only'}
+                            </Badge>
+                          </div>
+                        </div>
+                      </td>
+                      
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-2">
+                          {/* Status toggle switch */}
+                          <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                            isActive ? 'bg-green-500' : 'bg-gray-300'
+                          }`}>
+                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                              isActive ? 'translate-x-6' : 'translate-x-1'
+                            }`} />
+                          </div>
+                          
+                          {/* Calendar icon */}
+                          <div className="w-5 h-5 text-gray-400">
+                            <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+                              <path fillRule="evenodd" d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                        </div>
+                      </td>
+                      
+                      <td className="py-4 px-4">
+                        <span className="text-sm text-gray-600">
+                          {content.audience || 'None'}
+                        </span>
+                      </td>
+                      
+                      <td className="py-4 px-4 text-right">
+                        <Button variant="ghost" size="sm">
+                          <MoreVertical className="w-4 h-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <WidgetCreator
+          open={showCreator}
+          onOpenChange={handleCloseCreator}
+          widget={selectedWidget}
+          selectedType={widgetType}
+        />
+      </div>
+    );
+  }
+
+  // Special layout for story bar widgets to match the design reference
+  if (widgetType === 'story-bar') {
+    return (
+      <div className="animate-fade-in">
+        {/* Header */}
+        <header className="bg-card border-b border-border px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <Video className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">Story Bar</h1>
+                <p className="text-muted-foreground">Instagram-style stories for your website</p>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div className="p-6">
+          {/* Top section with filters */}
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-6">
+              <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+                <Video className="w-5 h-5" />
+                Content
+              </h2>
+              <div className="flex items-center gap-4">
+                <select className="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                  <option>Story Bar yt -test</option>
+                </select>
+                <select className="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                  <option>Labels</option>
+                </select>
+                <select className="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                  <option>Audiences</option>
+                </select>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="w-6 h-6">
+                <Search className="w-4 h-4 text-gray-400" />
+              </div>
+              {/* Grid/List view toggle */}
+              <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+                <button className="p-1.5 bg-white rounded-md shadow-sm">
+                  <Grid3X3 className="w-4 h-4 text-gray-600" />
+                </button>
+                <button className="p-1.5 text-gray-600">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Status tabs */}
+          <div className="flex gap-1 mb-6 border-b border-gray-200">
+            <button className="px-4 py-2 text-sm font-medium text-gray-900 border-b-2 border-gray-900">
+              All ({filteredWidgets.length})
+            </button>
+            <button className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
+              Active ({filteredWidgets.filter(w => w.status === 'active').length})
+            </button>
+            <button className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
+              Inactive (0)
+            </button>
+            <button className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
+              Test (0)
+            </button>
+            <button className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
+              Archived ({filteredWidgets.filter(w => w.status === 'archived').length})
+            </button>
+          </div>
+
+          {/* Card-based layout matching the design reference */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredWidgets.map((widget) => {
+              const isRecipeWidget = (widget as any).isRecipeWidget;
+              const content = widget.content as any;
+              const isActive = widget.status === 'active';
+              const hasPersonalization = content.hasPersonalization || false;
+              
+              return (
+                <div key={widget.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                  {/* Selection checkbox */}
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="w-5 h-5 border border-gray-300 rounded flex items-center justify-center">
+                      <div className="w-3 h-3 rounded-full bg-gray-200"></div>
+                    </div>
+                    <Button variant="ghost" size="sm">
+                      <MoreVertical className="w-4 h-4" />
+                    </Button>
+                  </div>
+
+                  {/* Story thumbnail */}
+                  <div className="flex justify-center mb-4">
+                    <div className="relative">
+                      {/* Circular story preview */}
+                      <div className="w-20 h-20 rounded-full bg-gray-200 border-4 border-gray-300 flex items-center justify-center overflow-hidden">
+                        {widget.name === "Personalization" ? (
+                          <div className="text-2xl">📊</div>
+                        ) : (
+                          <Image className="w-8 h-8 text-gray-400" />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Widget name and type */}
+                  <div className="text-center mb-4">
+                    <h3 className="font-medium text-gray-900 mb-2">{widget.name}</h3>
+                    {/* Widget type badge */}
+                    <Badge 
+                      variant="outline" 
+                      className={`text-xs ${isRecipeWidget ? "bg-purple-50 text-purple-700 border-purple-200" : "bg-blue-50 text-blue-700 border-blue-200"}`}
+                    >
+                      {isRecipeWidget ? 'Recipe' : 'Widget Only'}
+                    </Badge>
+                  </div>
+
+                  {/* Personalization toggle */}
+                  <div className="flex justify-center mb-4">
+                    <div className="text-sm text-gray-600 mb-2">Personalization</div>
+                  </div>
+                  <div className="flex justify-center mb-4">
+                    <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      hasPersonalization ? 'bg-green-500' : 'bg-gray-300'
+                    }`}>
+                      <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        hasPersonalization ? 'translate-x-6' : 'translate-x-1'
+                      }`} />
+                    </div>
+                  </div>
+
+                  {/* Analytics bars (simplified representation) */}
+                  <div className="flex justify-center gap-1 mb-4">
+                    <div className="w-3 h-8 bg-green-500 rounded-sm"></div>
+                    <div className="w-3 h-6 bg-orange-400 rounded-sm"></div>
+                    <div className="w-3 h-4 bg-gray-300 rounded-sm"></div>
+                  </div>
+
+                  {/* Audience information */}
+                  <div className="text-center">
+                    <div className="flex items-center justify-center gap-1 text-sm text-gray-500">
+                      <div className="w-4 h-4 text-gray-400">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                      </div>
+                      <span>{content.audience || 'Audience'}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <WidgetCreator
+          open={showCreator}
+          onOpenChange={handleCloseCreator}
+          widget={selectedWidget}
+          selectedType={widgetType}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="animate-fade-in">
       {/* Header */}

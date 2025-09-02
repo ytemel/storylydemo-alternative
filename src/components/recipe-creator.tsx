@@ -350,7 +350,7 @@ export default function RecipeCreator({
                         variant="outline" 
                         onClick={() => window.open('/dashboard/widgets', '_blank')}
                       >
-                        Open Widget Library
+                        Open Widget Libraryjjj
                       </Button>
                     </div>
 

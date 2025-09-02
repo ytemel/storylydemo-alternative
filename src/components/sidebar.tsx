@@ -131,7 +131,7 @@ export default function Sidebar() {
           {/* Widget Library Header */}
           <div className="px-4 py-2">
             <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-              Widget Library
+              Widgets
             </h3>
           </div>
           

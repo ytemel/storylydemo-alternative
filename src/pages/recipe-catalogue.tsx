@@ -5,10 +5,9 @@ import RecipeCreator from "@/components/recipe-creator";
 import {
   Target,
   ArrowRight,
-  Wand2,
 } from "lucide-react";
 import type { Recipe } from "@/shared/schema";
-import { getEligibleWidgetsForWidgetsOnly } from "@/lib/widget-definitions";
+
 
 // TypeScript types for the recipe hierarchy
 export interface RecipeTemplate {
@@ -429,31 +428,7 @@ export const recipeCategories: RecipeCategory[] = [
       },
     ],
   },
-  {
-    id: "widgets-only",
-    name: "Widgets Only",
-    description: "Create recipes that contain only widgets with no extra logic",
-    count: 0,
-    templates: [
-      {
-        id: "widgets-only-picker",
-        name: "Pick Widgets",
-        description: "Choose a widget type to add instantly—no extra setup needed",
-        icon: Wand2,
-        templates: getEligibleWidgetsForWidgetsOnly().map((w) => ({
-          id: w.id,
-          name: w.name,
-          description: `Add a ${w.name} to your page in seconds` ,
-          flow: [w.name],
-          personalizationDefaults: {
-            goal: `Use ${w.name} widget`,
-            logic: "No additional logic",
-            configuration: {},
-          },
-        })),
-      },
-    ],
-  },
+
 ];
 
 
@@ -466,7 +441,7 @@ const getSubcategoryColor = (subcategoryId: string) => {
     "create-sense-of-urgency": "bg-orange-50 text-orange-700",
     "reward-customers": "bg-pink-50 text-pink-700",
     "use-loyalty-status-drive-sales": "bg-cyan-50 text-cyan-700",
-    "widgets-only-picker": "bg-gray-50 text-gray-700"
+
   };
   return colorMap[subcategoryId] || "bg-gray-50 text-gray-700";
 };

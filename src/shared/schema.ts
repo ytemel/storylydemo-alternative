@@ -21,6 +21,11 @@ export const widgets = pgTable("widgets", {
     imageUrl?: string;
     videoUrl?: string;
     destinationUrl?: string;
+    collection?: string;
+    audience?: string;
+    slides?: string[];
+    questions?: string[];
+    endTime?: Date;
   }>(),
   style: json("style").$type<{
     backgroundColor?: string;
@@ -29,7 +34,8 @@ export const widgets = pgTable("widgets", {
     fontSize?: string;
   }>(),
   placementId: integer("placement_id"),
-  status: text("status").default("draft"), // 'draft', 'active', 'paused', 'detached', 'archived'
+  status: text("status").default("draft"), // 'draft', 'active', 'paused', 'detached', 'archived', 'scheduled', 'inactive'
+  scheduledAt: timestamp("scheduled_at"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
